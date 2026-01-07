@@ -1,0 +1,23 @@
+/* ... (previous styles) ... */
+
+.home-btn {
+    background: white;
+    border: 1px solid var(--border-color);
+    color: #555;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    /* Matches other controls */
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.home-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: #f1f8e9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
