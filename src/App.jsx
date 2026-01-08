@@ -457,6 +457,7 @@ function App() {
       <div className="container animate-fade-in">
         <div className="header">
           <div className="header-left">
+            <div className="app-branding" onClick={() => setStep(0)}>Grado ni Yano</div>
             <h1
               className="title"
               onClick={() => setStep(0)}

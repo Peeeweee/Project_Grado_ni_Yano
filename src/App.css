@@ -21,10 +21,12 @@
 
 body {
   font-family: var(--font-family);
-  background: var(--bg-light);
+  background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)),
+    url('/usep-eagle-min.jpg') center/cover no-repeat fixed;
   color: var(--text-dark);
   margin: 0;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
 /* Landing Container */
@@ -33,7 +35,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at center, #d87070 0%, #8b2626 100%);
+  background: linear-gradient(rgba(139, 38, 38, 0.85), rgba(139, 38, 38, 0.95)),
+    url('/usep-eagle-min.jpg') center/cover no-repeat;
   padding: 2rem;
   overflow: hidden;
 }
@@ -233,6 +236,21 @@ body {
 .header-left {
   display: flex;
   flex-direction: column;
+}
+
+.app-branding {
+  color: #a63a3a;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.75rem;
+  margin-bottom: 0.2rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.app-branding:hover {
+  opacity: 0.8;
 }
 
 .title {
@@ -622,6 +640,11 @@ body {
 
   .title {
     font-size: 1.5rem;
+  }
+
+  .app-branding {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
   }
 
   .student-info-header {
