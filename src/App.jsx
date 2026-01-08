@@ -129,6 +129,14 @@ function App() {
     localStorage.setItem('gwa-excluded', JSON.stringify(excludedSubjects));
   }, [excludedSubjects]);
 
+  // Automatic reset when switching course or college
+  useEffect(() => {
+    setGrades({});
+    setExcludedSubjects([]);
+    setManualGWA(0);
+    setTermsData(TERMS);
+  }, [college, course]);
+
   // Reset manual results when switching semesters
   useEffect(() => {
     setManualGWA(0);
@@ -136,6 +144,7 @@ function App() {
 
 
   const handleGradeChange = (id, value) => {
+    // If it's the select dropdown, we just set the value
     setGrades(prev => ({ ...prev, [id]: value }));
   };
 
@@ -168,6 +177,11 @@ function App() {
   };
 
   const handleCalculate = () => {
+    if (calculationDetails.details.length < 2) {
+      setErrorMessage("Calculation requires at least two (2) subjects with grades to compute a true GWA.");
+      return;
+    }
+
     setIsCalculating(true);
     // Add a slight premium delay for "Coolness"
     setTimeout(() => {
@@ -176,28 +190,24 @@ function App() {
     }, 1000);
   };
 
+
   const nextStep = () => {
     if (step === 2) {
       // Robust lookup: Find the default definition by name
       const currentTermName = termsData[selectedTermIndex].name;
       const defaultTerm = TERMS.find(t => t.name === currentTermName);
       const defaultSubjects = defaultTerm ? defaultTerm.subjects : [];
-      const currentSubjects = termsData[selectedTermIndex].subjects;
 
-      // Filter out current subjects that are "defaults" (to reset them) 
-      // but keep any custom subjects the user added.
-      const customSubjects = currentSubjects.filter(sub =>
-        !defaultSubjects.some(def => def.id === sub.id)
-      );
-
+      // STRICT RESET: Discard any previous custom subjects and always use the default curriculum
+      // This ensures "Custom (Manual Input)" is "really empty" (subjects: [])
       const updatedTerms = [...termsData];
       updatedTerms[selectedTermIndex] = {
         ...updatedTerms[selectedTermIndex],
-        subjects: [...defaultSubjects, ...customSubjects]
+        subjects: [...defaultSubjects]
       };
       setTermsData(updatedTerms);
 
-      // Reset exclusion status: Filter out any IDs belonging to subjects of the selected term
+      // Reset exclusion status for this term
       const termSubjectIds = updatedTerms[selectedTermIndex].subjects.map(s => s.id);
       setExcludedSubjects(prev => prev.filter(id => !termSubjectIds.includes(id)));
     }
@@ -343,7 +353,7 @@ function App() {
       hasFailingGrade,
       hasINC
     };
-  }, [grades, units, currentTerm]);
+  }, [grades, units, currentTerm, excludedSubjects]);
 
   // Overall GWA
   const overallGWA = useMemo(() => {
@@ -364,7 +374,7 @@ function App() {
     });
 
     return totalUnits > 0 ? (totalWeighted / totalUnits) : 0;
-  }, [grades, units, termsData]);
+  }, [grades, units, termsData, excludedSubjects]);
 
   // --- WIZARD PAGES ---
 
@@ -420,7 +430,7 @@ function App() {
             <option value="Software Engineering">BS Software Engineering</option>
           </select>
         </div>
-      </LandingLayout>
+      </LandingLayout >
     );
   }
 
@@ -483,6 +493,7 @@ function App() {
               </span>
             </div>
 
+
             <button
               className="home-btn"
               title="Go to Home"
@@ -540,16 +551,24 @@ function App() {
                         />
                       </td>
                       <td>
-                        <input
-                          type="number"
+                        <select
                           className="grade-input"
                           value={grade}
-                          placeholder="--"
-                          step="0.01"
-                          min="1.0"
-                          max="5.0"
                           onChange={(e) => handleGradeChange(sub.id, e.target.value)}
-                        />
+                        >
+                          <option value="">--</option>
+                          <option value="1.00">1.00</option>
+                          <option value="1.25">1.25</option>
+                          <option value="1.50">1.50</option>
+                          <option value="1.75">1.75</option>
+                          <option value="2.00">2.00</option>
+                          <option value="2.25">2.25</option>
+                          <option value="2.50">2.50</option>
+                          <option value="2.75">2.75</option>
+                          <option value="3.00">3.00</option>
+                          <option value="5.00">5.00</option>
+                          <option value="INC">INC</option>
+                        </select>
                       </td>
                       <td className="mobile-hide">
                         <span className={isExcluded ? 'status-enrolled' : statusClass}>
@@ -561,9 +580,7 @@ function App() {
                           className={`toggle-include-btn ${isExcluded ? 'is-excluded' : ''}`}
                           title={isExcluded ? "Include in GWA" : "Exclude from GWA"}
                           onClick={() => toggleSubjectInclusion(sub.id)}
-                        >
-                          {isExcluded ? '○' : '●'}
-                        </button>
+                        />
                       </td>
                       <td>
                         <div className="action-buttons">

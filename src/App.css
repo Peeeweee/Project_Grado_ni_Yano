@@ -446,13 +446,13 @@ body {
   font-size: 1rem;
   color: #1a1a1a;
   text-align: center;
+  background-color: white;
+  cursor: pointer;
 }
 
-.grade-input:focus,
-.unit-input:focus {
-  outline: none;
-  border-color: #a63a3a;
-  box-shadow: 0 0 0 4px rgba(166, 58, 58, 0.1);
+select.grade-input {
+  text-align-last: center;
+  padding-right: 0.5rem;
 }
 
 .status-passed {
@@ -487,32 +487,43 @@ body {
 
 .toggle-include-btn {
   background: #f0fdf4;
-  border: 1px solid #dcfce7;
+  border: 1px solid #22c55e;
   color: #22c55e;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-pill);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 80px;
 }
 
 .toggle-include-btn:hover {
-  transform: scale(1.1);
-  background: #dcfce7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+}
+
+.toggle-include-btn::before {
+  content: 'INCLUDED';
 }
 
 .toggle-include-btn.is-excluded {
   background: #fef2f2;
-  border-color: #fee2e2;
+  border-color: #ef4444;
   color: #ef4444;
 }
 
 .toggle-include-btn.is-excluded:hover {
-  background: #fee2e2;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.toggle-include-btn.is-excluded::before {
+  content: 'EXCLUDED';
 }
 
 .remove-btn {
@@ -715,7 +726,7 @@ body {
 
   .grade-input,
   .unit-input {
-    width: 45px !important;
+    width: 60px !important;
     padding: 0.3rem !important;
     font-size: 0.8rem !important;
   }
