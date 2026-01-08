@@ -506,7 +506,7 @@ function App() {
                 <th>Title</th>
                 <th>Unit</th>
                 <th>Final</th>
-                <th>Remarks</th>
+                <th className="mobile-hide">Remarks</th>
                 <th style={{ width: '80px' }}>Include</th>
                 <th style={{ width: '100px' }}>Actions</th>
               </tr>
@@ -556,7 +556,7 @@ function App() {
                           onChange={(e) => handleGradeChange(sub.id, e.target.value)}
                         />
                       </td>
-                      <td>
+                      <td className="mobile-hide">
                         <span className={isExcluded ? 'status-enrolled' : statusClass}>
                           {isExcluded ? 'EXCLUDED' : remarks}
                         </span>
