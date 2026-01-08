@@ -343,10 +343,11 @@ body {
   padding: 1.25rem 2rem;
   font-size: 0.75rem;
   text-transform: uppercase;
-  color: #888;
+  color: white;
   font-weight: 800;
-  background: #fafafa;
-  border-bottom: 1px solid #f0f0f0;
+  background: #a63a3a;
+  border-bottom: 2px solid #8b2626;
+  letter-spacing: 0.05em;
 }
 
 .grades-table td {
@@ -367,8 +368,53 @@ body {
 }
 
 .subject-title {
-  color: #4a4a4a;
   width: 40%;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.edit-row-btn {
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #999;
+  font-size: 0.9rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.edit-row-btn:hover {
+  background: #f0f7ff;
+  color: #3498db;
+  border-color: #3498db;
+  transform: scale(1.1);
+}
+
+.edit-subject-form {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.edit-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.edit-group label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-left: 0.2rem;
 }
 
 .grade-input,
@@ -408,6 +454,48 @@ body {
   font-size: 0.85rem;
 }
 
+/* Exclusions & Row Styling */
+.row-excluded {
+  opacity: 0.5;
+  background: #fafafa !important;
+}
+
+.row-excluded .subject-code,
+.row-excluded .subject-title {
+  text-decoration: line-through;
+  color: #999 !important;
+}
+
+.toggle-include-btn {
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  color: #22c55e;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toggle-include-btn:hover {
+  transform: scale(1.1);
+  background: #dcfce7;
+}
+
+.toggle-include-btn.is-excluded {
+  background: #fef2f2;
+  border-color: #fee2e2;
+  color: #ef4444;
+}
+
+.toggle-include-btn.is-excluded:hover {
+  background: #fee2e2;
+}
+
 .remove-btn {
   background: #f5f5f5;
   border: 1px solid #e0e0e0;
@@ -427,6 +515,17 @@ body {
 }
 
 /* Add Subject Section */
+.empty-table-msg {
+  padding: 4rem 2rem !important;
+  text-align: center;
+  color: #888;
+  font-size: 1.1rem;
+}
+
+.empty-table-msg strong {
+  color: #a63a3a;
+}
+
 .add-subject-container {
   padding: 1.5rem 2rem;
   border-top: 1px solid #f0f0f0;
@@ -506,6 +605,92 @@ body {
   }
 }
 
+.calc-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: stretch;
+  /* Make them same height */
+}
+
+.calc-toggle-btn {
+  background: white;
+  color: #1a1a1a;
+  border: 1px solid #ddd;
+  padding: 0 2rem;
+  /* Adjusted padding */
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.calc-toggle-btn:hover {
+  background: #fdfdfd;
+  border-color: #a63a3a;
+  color: #a63a3a;
+}
+
+.calc-toggle-btn.active {
+  background: #1a1a1a;
+  color: white;
+  border-color: #1a1a1a;
+}
+
+.calculate-trigger-btn {
+  flex: 1;
+  background: #a63a3a;
+  color: white;
+  border: 1px solid #a63a3a;
+  /* Match border width for height alignment */
+  padding: 0.9rem 2rem;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(166, 58, 58, 0.2);
+  animation: pulse-border 2s infinite;
+}
+
+.calculate-trigger-btn:hover {
+  background: #8b2626;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(166, 58, 58, 0.3);
+}
+
+.calculate-trigger-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  animation: none;
+}
+
+.calculate-trigger-btn.is-loading {
+  background: #d4a0a0;
+  cursor: wait;
+}
+
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 0 rgba(166, 58, 58, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(166, 58, 58, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(166, 58, 58, 0);
+  }
+}
+
 .computation-card,
 .overall-summary-card {
   background: white;
@@ -514,43 +699,54 @@ body {
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.03);
   overflow: hidden;
   transition: transform 0.3s ease;
-}
-
-.computation-card {
-  padding: 2rem;
+  padding: 2.5rem 2rem;
+  /* Normalized padding */
 }
 
 .overall-summary-card {
-  padding: 2.5rem 2rem;
   background: linear-gradient(135deg, #ffffff 0%, #fdfdfd 100%);
 }
 
 .card-header {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  margin-bottom: 1.5rem;
+  gap: 1rem;
+  margin: -2.5rem -2.5rem 2.5rem -2.5rem;
+  /* Flush with top */
+  padding: 1.5rem 2.5rem;
+  background: #a63a3a;
+  color: white;
+  border-bottom: 2px solid #8b2626;
+  border-radius: 20px 20px 0 0;
+}
+
+.card-header h3 {
+  color: white !important;
+  margin: 0 !important;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .card-icon {
   width: 36px;
   height: 36px;
-  background: #fff5f5;
-  color: #a63a3a;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
 .card-header h3 {
+  color: white !important;
+  margin: 0 !important;
   font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   font-weight: 700;
-  color: #1a1a1a;
-  margin: 0;
-  letter-spacing: -0.02em;
 }
 
 .formula-box {
@@ -700,29 +896,6 @@ body {
 }
 
 /* Computation Button Fix */
-.calc-toggle-btn {
-  background: #fff;
-  border: 1px solid #ccc;
-  padding: 0.6rem 1.2rem;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  margin-bottom: 1.5rem;
-  transition: all 0.2s;
-}
-
-.calc-toggle-btn:hover {
-  background: #fafafa;
-  border-color: #999;
-}
-
-.calc-toggle-btn.active {
-  background: #1a1a1a;
-  color: white;
-  border-color: #1a1a1a;
-}
 
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
@@ -842,4 +1015,39 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Error Modal Specifics */
+.error-card {
+  border-top: 5px solid #a63a3a;
+  padding: 3rem 2.5rem !important;
+}
+
+.error-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.modal-ok-btn {
+  background: #a63a3a;
+  color: white;
+  border: none;
+  padding: 0.8rem 3rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(166, 58, 58, 0.2);
+}
+
+.modal-ok-btn:hover {
+  background: #8b2626;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(166, 58, 58, 0.3);
+}
+
+.modal-ok-btn:active {
+  transform: translateY(0);
 }

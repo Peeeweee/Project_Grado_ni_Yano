@@ -96,5 +96,9 @@ export const TERMS = [
             { id: "CS 4212", code: "CS 4212", title: "Legal, Ethical and Policy Issues in Data Science", units: 3 },
             { id: "Thesis 400_4_2", code: "Thesis 400", title: "Thesis", units: 3 },
         ]
+    },
+    {
+        name: "Custom (Manual Input)",
+        subjects: []
     }
 ];

@@ -46,9 +46,21 @@ function App() {
   // Terms Data State (Mutable)
   const [termsData, setTermsData] = useState(() => {
     try {
-      const saved = localStorage.getItem('gwa-terms');
-      return saved ? JSON.parse(saved) : TERMS;
-    } catch (e) { return TERMS; }
+      const savedRaw = localStorage.getItem('gwa-terms');
+      const saved = savedRaw ? JSON.parse(savedRaw) : null;
+      if (!saved) return TERMS;
+
+      // Sync: Add missing terms from the data.js constant to the saved state
+      const synced = [...saved];
+      TERMS.forEach(defTerm => {
+        if (!synced.some(t => t.name === defTerm.name)) {
+          synced.push(defTerm);
+        }
+      });
+      return synced;
+    } catch (e) {
+      return TERMS;
+    }
   });
 
   // Load initial state from localStorage
@@ -81,6 +93,24 @@ function App() {
   // Delete Confirmation State
   const [subjectToDelete, setSubjectToDelete] = useState(null);
 
+  // Edit Subject State
+  const [subjectToEdit, setSubjectToEdit] = useState(null);
+
+  // Form Validation Error State
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  // Excluded Subjects (Excluded from GWA but kept in list)
+  const [excludedSubjects, setExcludedSubjects] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gwa-excluded');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) { return []; }
+  });
+
+  // Manual Calculation State
+  const [manualGWA, setManualGWA] = useState(0);
+  const [isCalculating, setIsCalculating] = useState(false);
+
   // Save to localStorage
   useEffect(() => {
     localStorage.setItem('gwa-grades', JSON.stringify(grades));
@@ -100,6 +130,15 @@ function App() {
     localStorage.setItem('gwa-terms', JSON.stringify(termsData));
   }, [termsData]);
 
+  useEffect(() => {
+    localStorage.setItem('gwa-excluded', JSON.stringify(excludedSubjects));
+  }, [excludedSubjects]);
+
+  // Reset manual results when switching semesters
+  useEffect(() => {
+    setManualGWA(0);
+  }, [selectedTermIndex]);
+
 
   const handleGradeChange = (id, value) => {
     setGrades(prev => ({ ...prev, [id]: value }));
@@ -109,10 +148,45 @@ function App() {
     setUnits(prev => ({ ...prev, [id]: parseFloat(value) || 0 }));
   };
 
+  const handleStartEdit = (termIndex, subject) => {
+    setSubjectToEdit({ termIndex, ...subject, units: units[subject.id] !== undefined ? units[subject.id] : subject.units });
+  };
+
+  const cancelEdit = () => {
+    setSubjectToEdit(null);
+  };
+
+  const handleSaveEdit = () => {
+    if (!subjectToEdit) return;
+    const { termIndex, id, code, title, units: editedUnits } = subjectToEdit;
+
+    const newTerms = [...termsData];
+    const sub = newTerms[termIndex].subjects.find(s => s.id === id);
+    if (sub) {
+      sub.code = code;
+      sub.title = title;
+      sub.units = parseFloat(editedUnits) || 0;
+      setTermsData(newTerms);
+      setUnits(prev => ({ ...prev, [id]: parseFloat(editedUnits) || 0 }));
+    }
+    setSubjectToEdit(null);
+  };
+
+  const handleCalculate = () => {
+    setIsCalculating(true);
+    // Add a slight premium delay for "Coolness"
+    setTimeout(() => {
+      setManualGWA(calculationDetails.gwa);
+      setIsCalculating(false);
+    }, 1000);
+  };
+
   const nextStep = () => {
     if (step === 2) {
-      // Reload "real and complete normal courses" for the selected semester
-      const defaultSubjects = TERMS[selectedTermIndex].subjects;
+      // Robust lookup: Find the default definition by name
+      const currentTermName = termsData[selectedTermIndex].name;
+      const defaultTerm = TERMS.find(t => t.name === currentTermName);
+      const defaultSubjects = defaultTerm ? defaultTerm.subjects : [];
       const currentSubjects = termsData[selectedTermIndex].subjects;
 
       // Filter out current subjects that are "defaults" (to reset them) 
@@ -127,6 +201,10 @@ function App() {
         subjects: [...defaultSubjects, ...customSubjects]
       };
       setTermsData(updatedTerms);
+
+      // Reset exclusion status: Filter out any IDs belonging to subjects of the selected term
+      const termSubjectIds = updatedTerms[selectedTermIndex].subjects.map(s => s.id);
+      setExcludedSubjects(prev => prev.filter(id => !termSubjectIds.includes(id)));
     }
     setStep(prev => prev + 1);
   };
@@ -163,9 +241,15 @@ function App() {
     setSubjectToDelete(null);
   };
 
+  const toggleSubjectInclusion = (id) => {
+    setExcludedSubjects(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
   const handleAddSubject = () => {
     if (!newSubject.code || !newSubject.title) {
-      alert("Please enter code and title.");
+      setErrorMessage("Please enter both the subject code and title before adding.");
       return;
     }
 
@@ -198,8 +282,9 @@ function App() {
       const val = grades[sub.id];
       const grade = parseFloat(val);
       const unit = units[sub.id] !== undefined ? units[sub.id] : sub.units;
+      const isExcluded = excludedSubjects.includes(sub.id);
 
-      if (val !== undefined && val !== '' && !isNaN(grade) && grade > 0) {
+      if (val !== undefined && val !== '' && !isNaN(grade) && grade > 0 && !isExcluded) {
         const product = grade * unit;
         totalWeightedGrades += product;
         totalUnits += unit;
@@ -232,7 +317,9 @@ function App() {
       const val = grades[sub.id];
       const grade = parseFloat(val);
       const unit = units[sub.id] !== undefined ? units[sub.id] : sub.units;
-      if (val && !isNaN(grade) && grade > 0) {
+      const isExcluded = excludedSubjects.includes(sub.id);
+
+      if (val && !isNaN(grade) && grade > 0 && !isExcluded) {
         totalWeighted += grade * unit;
         totalUnits += unit;
       }
@@ -351,9 +438,9 @@ function App() {
             </button>
 
             <div className="gwa-badge">
-              <span className="gwa-number">{calculationDetails.gwa > 0 ? Number(calculationDetails.gwa).toFixed(2) : '--'}</span>
-              <span className={`remarks-status ${calculationDetails.gwa > 3.0 ? 'status-failed' : 'status-passed'}`}>
-                {calculationDetails.gwa > 0 ? (calculationDetails.gwa <= 3.0 ? 'PASSED' : 'FAILED') : '--'}
+              <span className="gwa-number">{manualGWA > 0 ? Number(manualGWA).toFixed(4) : '--'}</span>
+              <span className={`remarks-status ${manualGWA > 3.0 ? 'status-failed' : 'status-passed'}`}>
+                {manualGWA > 0 ? (manualGWA <= 3.0 ? 'PASSED' : 'FAILED') : '--'}
               </span>
             </div>
 
@@ -376,69 +463,97 @@ function App() {
                 <th>Unit</th>
                 <th>Final</th>
                 <th>Remarks</th>
-                <th style={{ width: '50px' }}></th>
+                <th style={{ width: '80px' }}>Include</th>
+                <th style={{ width: '100px' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {currentTerm.subjects.map(sub => {
-                const grade = grades[sub.id] !== undefined ? grades[sub.id] : '';
-                let remarks = 'ENROLLED';
-                let statusClass = 'status-enrolled';
+              {currentTerm.subjects.length > 0 ? (
+                currentTerm.subjects.map(sub => {
+                  const grade = grades[sub.id] !== undefined ? grades[sub.id] : '';
+                  const isExcluded = excludedSubjects.includes(sub.id);
+                  let remarks = 'ENROLLED';
+                  let statusClass = 'status-enrolled';
 
-                if (grade !== '' && grade !== null) {
-                  const g = parseFloat(grade);
-                  if (!isNaN(g)) {
-                    if (g <= 3.0) {
-                      remarks = 'PASSED';
-                      statusClass = 'status-passed';
-                    } else {
-                      remarks = 'FAILED';
-                      statusClass = 'status-failed';
+                  if (grade !== '' && grade !== null) {
+                    const g = parseFloat(grade);
+                    if (!isNaN(g)) {
+                      if (g <= 3.0) {
+                        remarks = 'PASSED';
+                        statusClass = 'status-passed';
+                      } else {
+                        remarks = 'FAILED';
+                        statusClass = 'status-failed';
+                      }
                     }
                   }
-                }
 
-                return (
-                  <tr key={sub.id}>
-                    <td className="subject-code">{sub.code}</td>
-                    <td className="subject-title">{sub.title}</td>
-                    <td>
-                      <input
-                        className="unit-input"
-                        type="number"
-                        value={units[sub.id] !== undefined ? units[sub.id] : sub.units}
-                        onChange={(e) => handleUnitChange(sub.id, e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        className="grade-input"
-                        value={grade}
-                        placeholder="--"
-                        step="0.01"
-                        min="1.0"
-                        max="5.0"
-                        onChange={(e) => handleGradeChange(sub.id, e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <span className={statusClass}>
-                        {remarks}
-                      </span>
-                    </td>
-                    <td>
-                      <button
-                        className="remove-btn"
-                        title="Remove Subject"
-                        onClick={() => handleRemoveSubject(selectedTermIndex, sub.id)}
-                      >
-                        ×
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+                  return (
+                    <tr key={sub.id} className={isExcluded ? 'row-excluded' : ''}>
+                      <td className="subject-code">{sub.code}</td>
+                      <td className="subject-title">{sub.title}</td>
+                      <td>
+                        <input
+                          className="unit-input"
+                          type="number"
+                          value={units[sub.id] !== undefined ? units[sub.id] : sub.units}
+                          onChange={(e) => handleUnitChange(sub.id, e.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          className="grade-input"
+                          value={grade}
+                          placeholder="--"
+                          step="0.01"
+                          min="1.0"
+                          max="5.0"
+                          onChange={(e) => handleGradeChange(sub.id, e.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <span className={isExcluded ? 'status-enrolled' : statusClass}>
+                          {isExcluded ? 'EXCLUDED' : remarks}
+                        </span>
+                      </td>
+                      <td>
+                        <button
+                          className={`toggle-include-btn ${isExcluded ? 'is-excluded' : ''}`}
+                          title={isExcluded ? "Include in GWA" : "Exclude from GWA"}
+                          onClick={() => toggleSubjectInclusion(sub.id)}
+                        >
+                          {isExcluded ? '○' : '●'}
+                        </button>
+                      </td>
+                      <td>
+                        <div className="action-buttons">
+                          <button
+                            className="edit-row-btn"
+                            title="Edit Subject"
+                            onClick={() => handleStartEdit(selectedTermIndex, sub)}
+                          >
+                            ✎
+                          </button>
+                          <button
+                            className="remove-btn"
+                            title="Remove Subject"
+                            onClick={() => handleRemoveSubject(selectedTermIndex, sub.id)}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="7" className="empty-table-msg">
+                    No subjects added yet. Click <strong>+ ADD SUBJECT</strong> below to start manual input.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
 
@@ -482,12 +597,22 @@ function App() {
         <div className="results-grid animate-fade-in">
           {/* Computation Card */}
           <div className="calculation-section">
-            <button
-              className={`calc-toggle-btn ${showCalculation ? 'active' : ''}`}
-              onClick={() => setShowCalculation(!showCalculation)}
-            >
-              {showCalculation ? 'Hide Computation' : 'Show Computation'}
-            </button>
+            <div className="calc-actions">
+              <button
+                className={`calc-toggle-btn ${showCalculation ? 'active' : ''}`}
+                onClick={() => setShowCalculation(!showCalculation)}
+              >
+                {showCalculation ? 'Hide Computation' : 'Show Computation'}
+              </button>
+
+              <button
+                className={`calculate-trigger-btn ${isCalculating ? 'is-loading' : ''}`}
+                onClick={handleCalculate}
+                disabled={isCalculating}
+              >
+                {isCalculating ? 'Computing...' : 'Calculate My GWA'}
+              </button>
+            </div>
 
             {showCalculation && (
               <div className="computation-card">
@@ -525,7 +650,7 @@ function App() {
                       <div className="final-step">
                         <span className="equals">→</span>
                         <span>{calculationDetails.totalWeightedGrades.toFixed(2)} / {calculationDetails.totalUnits} =</span>
-                        <span className="highlight-result">{calculationDetails.gwa.toFixed(4)}</span>
+                        <span className="highlight-result">{manualGWA > 0 ? manualGWA.toFixed(4) : '----'}</span>
                       </div>
                     </div>
                   </div>
@@ -544,15 +669,15 @@ function App() {
             </div>
             <div className="summary-content">
               <div className="summary-badge-item">
-                <span className="item-label">CUMULATIVE GWA</span>
-                <span className="item-value">{overallGWA > 0 ? Number(overallGWA).toFixed(4) : '--'}</span>
+                <span className="item-label">SEMESTER GWA</span>
+                <span className="item-value">{manualGWA > 0 ? Number(manualGWA).toFixed(4) : '--'}</span>
               </div>
-              {overallGWA > 0 && (
-                <div className={`status-pill ${overallGWA <= 3.0 ? 'status-passed' : 'status-failed'}`}>
-                  {overallGWA <= 3.0 ? 'PASSED' : 'FAILED'}
+              {manualGWA > 0 && (
+                <div className={`status-pill ${manualGWA <= 3.0 ? 'status-passed' : 'status-failed'}`}>
+                  {manualGWA <= 3.0 ? 'PASSED' : 'FAILED'}
                 </div>
               )}
-              <p className="summary-footer">Based on all recorded semesters</p>
+              <p className="summary-footer">Result for {currentTerm.name}</p>
             </div>
           </div>
         </div>
@@ -567,6 +692,61 @@ function App() {
             <div className="modal-actions">
               <button className="modal-cancel-btn" onClick={cancelDelete}>Cancel</button>
               <button className="modal-confirm-btn" onClick={confirmDelete}>Remove</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Error Modal */}
+      {errorMessage && (
+        <div className="modal-overlay animate-fade-in">
+          <div className="modal-card error-card">
+            <div className="error-icon">⚠️</div>
+            <h3>Missing Information</h3>
+            <p>{errorMessage}</p>
+            <div className="modal-actions" style={{ justifyContent: 'center' }}>
+              <button className="modal-ok-btn" onClick={() => setErrorMessage(null)}>Got it</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Edit Subject Modal */}
+      {subjectToEdit && (
+        <div className="modal-overlay animate-fade-in">
+          <div className="modal-card">
+            <div className="card-header" style={{ margin: '-2.5rem -2.5rem 2rem -2.5rem' }}>
+              <span className="card-icon">✏️</span>
+              <h3>Edit Subject</h3>
+            </div>
+            <div className="edit-subject-form">
+              <div className="edit-group">
+                <label>Subject Code</label>
+                <input
+                  className="premium-input"
+                  value={subjectToEdit.code}
+                  onChange={(e) => setSubjectToEdit({ ...subjectToEdit, code: e.target.value })}
+                />
+              </div>
+              <div className="edit-group">
+                <label>Subject Title</label>
+                <input
+                  className="premium-input"
+                  value={subjectToEdit.title}
+                  onChange={(e) => setSubjectToEdit({ ...subjectToEdit, title: e.target.value })}
+                />
+              </div>
+              <div className="edit-group">
+                <label>Units</label>
+                <input
+                  type="number"
+                  className="premium-input"
+                  value={subjectToEdit.units}
+                  onChange={(e) => setSubjectToEdit({ ...subjectToEdit, units: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="modal-actions" style={{ marginTop: '2rem' }}>
+              <button className="modal-cancel-btn" onClick={cancelEdit}>Cancel</button>
+              <button className="modal-confirm-btn" onClick={handleSaveEdit}>Save Changes</button>
             </div>
           </div>
         </div>
