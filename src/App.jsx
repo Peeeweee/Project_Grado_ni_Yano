@@ -277,6 +277,8 @@ function App() {
     let totalUnits = 0;
     let totalWeightedGrades = 0;
     let details = [];
+    let hasFailingGrade = false;
+    let totalEnrolledUnits = 0;
 
     currentTerm.subjects.forEach(sub => {
       const val = grades[sub.id];
@@ -284,26 +286,67 @@ function App() {
       const unit = units[sub.id] !== undefined ? units[sub.id] : sub.units;
       const isExcluded = excludedSubjects.includes(sub.id);
 
-      if (val !== undefined && val !== '' && !isNaN(grade) && grade > 0 && !isExcluded) {
-        const product = grade * unit;
-        totalWeightedGrades += product;
-        totalUnits += unit;
-        details.push({
-          code: sub.code,
-          grade,
-          unit,
-          product
-        });
+      totalEnrolledUnits += unit;
+
+      if (val !== undefined && val !== '' && !isNaN(grade)) {
+        if (grade > 3.0) hasFailingGrade = true;
+
+        if (grade > 0 && !isExcluded) {
+          const product = grade * unit;
+          totalWeightedGrades += product;
+          totalUnits += unit;
+          details.push({
+            code: sub.code,
+            grade,
+            unit,
+            product
+          });
+        }
       }
     });
 
     const gwa = totalUnits > 0 ? (totalWeightedGrades / totalUnits) : 0;
 
+    // Honor Logic
+    const defaultTerm = TERMS.find(t => t.name === currentTerm.name);
+    const prescribedLoad = defaultTerm ? defaultTerm.subjects.reduce((sum, s) => sum + s.units, 0) : 18;
+    const isFullLoad = totalEnrolledUnits >= Math.min(18, prescribedLoad);
+
+    // Check for INC manually in case it's not a number
+    let hasINC = false;
+    currentTerm.subjects.forEach(sub => {
+      const val = grades[sub.id];
+      if (val && typeof val === 'string' && val.toUpperCase() === 'INC') {
+        hasINC = true;
+      }
+    });
+
+    let honorStatus = null;
+    if (gwa > 0) {
+      if (isFullLoad && !hasFailingGrade && !hasINC) {
+        if (gwa <= 1.25) {
+          honorStatus = "University Scholar";
+        } else if (gwa <= 1.45) {
+          honorStatus = "College Scholar";
+        } else if (gwa <= 1.75) {
+          honorStatus = "Dean's Lister";
+        } else {
+          honorStatus = "Not Qualified";
+        }
+      } else {
+        honorStatus = "Not Qualified";
+      }
+    }
+
     return {
       details,
       totalUnits,
       totalWeightedGrades,
-      gwa
+      gwa,
+      honorStatus,
+      isFullLoad,
+      hasFailingGrade,
+      hasINC
     };
   }, [grades, units, currentTerm]);
 
@@ -673,9 +716,34 @@ function App() {
                 <span className="item-value">{manualGWA > 0 ? Number(manualGWA).toFixed(4) : '--'}</span>
               </div>
               {manualGWA > 0 && (
-                <div className={`status-pill ${manualGWA <= 3.0 ? 'status-passed' : 'status-failed'}`}>
-                  {manualGWA <= 3.0 ? 'PASSED' : 'FAILED'}
-                </div>
+                <>
+                  <div className={`status-pill ${manualGWA <= 3.0 ? 'status-passed' : 'status-failed'}`}>
+                    {manualGWA <= 3.0 ? 'PASSED' : 'FAILED'}
+                  </div>
+
+                  <div className="honors-container">
+                    {calculationDetails.honorStatus && calculationDetails.honorStatus !== "Not Qualified" ? (
+                      <div className="honor-badge animate-pop">
+                        <span className="honor-icon">🎖️</span>
+                        <div className="honor-texts">
+                          <span className="honor-title">{calculationDetails.honorStatus}</span>
+                          <span className="honor-subtitle">OFFICIAL DEAN'S LISTER</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="honor-disqualified animate-pop">
+                        <span className="dq-label">HONOR STATUS</span>
+                        <span className="dq-value">NOT DEAN'S LIST</span>
+                        <div className="dq-reasons">
+                          {!calculationDetails.isFullLoad && <span>• Underloaded (Min 18 units)</span>}
+                          {calculationDetails.hasFailingGrade && <span>• Failing Grade detected (Above 3.0)</span>}
+                          {calculationDetails.hasINC && <span>• Incomplete (INC) detected</span>}
+                          {manualGWA > 1.75 && <span>• GWA must be 1.75 or better</span>}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
               <p className="summary-footer">Result for {currentTerm.name}</p>
             </div>

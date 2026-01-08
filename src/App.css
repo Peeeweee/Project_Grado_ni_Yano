@@ -1051,3 +1051,99 @@ body {
 .modal-ok-btn:active {
   transform: translateY(0);
 }
+
+/* Honors Styles */
+.honors-container {
+  margin-top: 1.5rem;
+}
+
+.honor-badge {
+  background: linear-gradient(135deg, #fff9e6 0%, #fff2cc 100%);
+  border: 1px solid #ffd966;
+  padding: 1.25rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: left;
+  box-shadow: 0 8px 25px rgba(255, 217, 102, 0.15);
+  margin-top: 1rem;
+}
+
+.honor-icon {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.honor-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.honor-title {
+  color: #856404;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.1rem;
+}
+
+.honor-subtitle {
+  color: #997404;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.honor-disqualified {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  background: #fff5f5;
+  padding: 1.25rem;
+  border-radius: 16px;
+  border: 1px solid #fee2e2;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.dq-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #a63a3a;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+.dq-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #a63a3a;
+  letter-spacing: -0.02em;
+}
+
+.dq-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #c53030;
+}
+
+.animate-pop {
+  animation: popScale 0.5s cubic-bezier(0.17, 0.89, 0.32, 1.49) forwards;
+}
+
+@keyframes popScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
