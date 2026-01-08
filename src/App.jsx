@@ -2,6 +2,35 @@ import { useState, useMemo, useEffect } from 'react';
 import './App.css';
 import { TERMS } from './data';
 
+const LandingLayout = ({ children, buttonText, onNext }) => (
+  <div className="landing-container">
+    <div className="landing-card">
+      <div className="official-badge">Student Personal Project</div>
+      <div className="icon-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
+          <line x1="8" y1="10" x2="16" y2="10" />
+          <line x1="8" y1="14" x2="16" y2="14" />
+          <line x1="8" y1="18" x2="16" y2="18" />
+        </svg>
+      </div>
+      <h1 className="brand-title">Grado ni<span>Yano</span></h1>
+      <p className="brand-subtitle">A General Weighted Average Calculator for the <span>USePian</span> community.</p>
+
+      {children}
+
+      <button className="premium-button" onClick={onNext}>
+        {buttonText} ›
+      </button>
+
+      <div className="landing-footer">
+        <span className="footer-link-badge">Privacy First</span>
+        <span className="footer-link-badge">USeP Grading</span>
+      </div>
+    </div>
+  </div>
+);
+
 function App() {
   // Steps: 0 = Name, 1 = College/Course, 2 = Semester, 3 = Dashboard
   const [step, setStep] = useState(0);
@@ -81,6 +110,24 @@ function App() {
   };
 
   const nextStep = () => {
+    if (step === 2) {
+      // Reload "real and complete normal courses" for the selected semester
+      const defaultSubjects = TERMS[selectedTermIndex].subjects;
+      const currentSubjects = termsData[selectedTermIndex].subjects;
+
+      // Filter out current subjects that are "defaults" (to reset them) 
+      // but keep any custom subjects the user added.
+      const customSubjects = currentSubjects.filter(sub =>
+        !defaultSubjects.some(def => def.id === sub.id)
+      );
+
+      const updatedTerms = [...termsData];
+      updatedTerms[selectedTermIndex] = {
+        ...updatedTerms[selectedTermIndex],
+        subjects: [...defaultSubjects, ...customSubjects]
+      };
+      setTermsData(updatedTerms);
+    }
     setStep(prev => prev + 1);
   };
 
@@ -96,6 +143,18 @@ function App() {
     const newTerms = [...termsData];
     newTerms[termIndex].subjects = newTerms[termIndex].subjects.filter(sub => sub.id !== subjectId);
     setTermsData(newTerms);
+
+    // Cleanup associated grades and units
+    setGrades(prev => {
+      const next = { ...prev };
+      delete next[subjectId];
+      return next;
+    });
+    setUnits(prev => {
+      const next = { ...prev };
+      delete next[subjectId];
+      return next;
+    });
 
     setSubjectToDelete(null);
   };
@@ -187,97 +246,78 @@ function App() {
   // Page 1: Name
   if (step === 0) {
     return (
-      <div className="landing-container animate-fade-in">
-        <div className="landing-content">
-          <h1 className="landing-title">Grado Liyag</h1>
-          <p className="landing-subtitle">Let's get to know you.</p>
-
-          <div className="input-group">
-            <label className="input-label">What is your name?</label>
-            <input
-              type="text"
-              className="name-input"
-              placeholder="e.g. Juan dela Cruz"
-              value={studentName}
-              onChange={(e) => setStudentName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && nextStep()}
-              autoFocus
-            />
-          </div>
-
-          <button className="enter-button" onClick={nextStep}>
-            Next
-          </button>
+      <LandingLayout
+        buttonText="START CALCULATING"
+        onNext={nextStep}
+      >
+        <div className="landing-input-group">
+          <input
+            type="text"
+            className="premium-input"
+            placeholder="Enter your name..."
+            value={studentName}
+            onChange={(e) => setStudentName(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && nextStep()}
+            autoFocus
+          />
         </div>
-      </div>
+      </LandingLayout>
     );
   }
 
   // Page 2: College & Course
   if (step === 1) {
     return (
-      <div className="landing-container animate-fade-in">
-        <div className="landing-content">
-          <h1 className="landing-title">Academics</h1>
-          <p className="landing-subtitle">Tell us about your program.</p>
-
-          <div className="input-group">
-            <label className="input-label">College</label>
-            <select
-              className="setup-select"
-              value={college}
-              onChange={(e) => setCollege(e.target.value)}
-            >
-              <option value="College of Information and Computing">College of Information and Computing</option>
-              {/* Future colleges */}
-            </select>
-          </div>
-
-          <div className="input-group">
-            <label className="input-label">Course</label>
-            <select
-              className="setup-select"
-              value={course}
-              onChange={(e) => setCourse(e.target.value)}
-            >
-              <option value="Computer Science">Computer Science</option>
-              {/* Future courses */}
-            </select>
-          </div>
-
-          <button className="enter-button" onClick={nextStep}>
-            Next
-          </button>
+      <LandingLayout
+        buttonText="PROCEED"
+        onNext={nextStep}
+      >
+        <div className="landing-input-group">
+          <select
+            className="premium-select"
+            value={college}
+            onChange={(e) => setCollege(e.target.value)}
+            style={{ marginBottom: '1rem' }}
+          >
+            <option value="College of Information and Computing">College of Information and Computing</option>
+            <option value="College of Engineering">College of Engineering</option>
+            <option value="College of Arts and Sciences">College of Arts and Sciences</option>
+            <option value="College of Education">College of Education</option>
+            <option value="College of Business Administration">College of Business Administration</option>
+          </select>
+          <select
+            className="premium-select"
+            value={course}
+            onChange={(e) => setCourse(e.target.value)}
+          >
+            <option value="Computer Science">BS Computer Science</option>
+            <option value="Information Technology">BS Information Technology</option>
+            <option value="Software Engineering">BS Software Engineering</option>
+          </select>
         </div>
-      </div>
+      </LandingLayout>
     );
   }
 
   // Page 3: Semester
   if (step === 2) {
     return (
-      <div className="landing-container animate-fade-in">
-        <div className="landing-content">
-          <h1 className="landing-title">Semester</h1>
-          <p className="landing-subtitle">Which term do you want to view first?</p>
-
-          <div className="input-group">
-            <select
-              className="setup-select"
-              value={selectedTermIndex}
-              onChange={(e) => setSelectedTermIndex(Number(e.target.value))}
-            >
-              {termsData.map((term, index) => (
-                <option key={index} value={index}>{term.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <button className="enter-button" onClick={nextStep}>
-            PROCEED
-          </button>
+      <LandingLayout
+        buttonText="PROCEED"
+        onNext={nextStep}
+      >
+        <div className="landing-input-group">
+          <select
+            className="premium-select"
+            value={selectedTermIndex}
+            onChange={(e) => setSelectedTermIndex(Number(e.target.value))}
+          >
+            {termsData.map((term, index) => (
+              <option key={index} value={index}>{term.name}</option>
+            ))}
+          </select>
         </div>
-      </div>
+      </LandingLayout>
     );
   }
 
@@ -307,26 +347,25 @@ function App() {
               title="Switch Semester"
               onClick={() => setStep(2)}
             >
-              Switch Semester <span style={{ marginLeft: '8px', fontSize: '10px' }}>▼</span>
+              Switch Semester <span>▼</span>
             </button>
 
             <div className="gwa-badge">
               <span className="gwa-number">{calculationDetails.gwa > 0 ? Number(calculationDetails.gwa).toFixed(2) : '--'}</span>
-              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--success-color)' }}>PASSED</span>
+              <span className={`remarks-status ${calculationDetails.gwa > 3.0 ? 'status-failed' : 'status-passed'}`}>
+                {calculationDetails.gwa > 0 ? (calculationDetails.gwa <= 3.0 ? 'PASSED' : 'FAILED') : '--'}
+              </span>
             </div>
 
             <button
               className="home-btn"
               title="Go to Home"
               onClick={() => setStep(0)}
-              style={{ fontWeight: 600 }}
             >
               Home
             </button>
           </div>
         </div>
-
-        {/* <h2 className="current-term-heading">{currentTerm.name}</h2> - Moved to dropdown button */}
 
         <div className="grades-card">
           <table className="grades-table">
@@ -334,10 +373,10 @@ function App() {
               <tr>
                 <th>Code</th>
                 <th>Title</th>
-                <th className="unit-cell">Unit</th>
-                <th className="grade-cell">Final</th>
-                <th className="remarks-cell">Remarks</th>
-                <th className="action-cell"></th>
+                <th>Unit</th>
+                <th>Final</th>
+                <th>Remarks</th>
+                <th style={{ width: '50px' }}></th>
               </tr>
             </thead>
             <tbody>
@@ -363,7 +402,7 @@ function App() {
                   <tr key={sub.id}>
                     <td className="subject-code">{sub.code}</td>
                     <td className="subject-title">{sub.title}</td>
-                    <td className="unit-cell">
+                    <td>
                       <input
                         className="unit-input"
                         type="number"
@@ -371,7 +410,7 @@ function App() {
                         onChange={(e) => handleUnitChange(sub.id, e.target.value)}
                       />
                     </td>
-                    <td className="grade-cell">
+                    <td>
                       <input
                         type="number"
                         className="grade-input"
@@ -383,12 +422,12 @@ function App() {
                         onChange={(e) => handleGradeChange(sub.id, e.target.value)}
                       />
                     </td>
-                    <td className="remarks-cell">
+                    <td>
                       <span className={statusClass}>
                         {remarks}
                       </span>
                     </td>
-                    <td className="action-cell">
+                    <td>
                       <button
                         className="remove-btn"
                         title="Remove Subject"
@@ -426,7 +465,7 @@ function App() {
                 <input
                   type="number"
                   className="new-input unit-field"
-                  placeholder="Units"
+                  placeholder="3"
                   value={newSubject.units}
                   onChange={(e) => setNewSubject(prev => ({ ...prev, units: e.target.value }))}
                 />
@@ -439,54 +478,83 @@ function App() {
           </div>
         </div>
 
-        {/* Calculation Toggle */}
-        <div className="calculation-section">
-          <button
-            className="calc-toggle-btn"
-            onClick={() => setShowCalculation(!showCalculation)}
-          >
-            {showCalculation ? 'Hide Computation' : 'Show Computation'}
-          </button>
+        {/* Aesthetic Result Cards Section */}
+        <div className="results-grid animate-fade-in">
+          {/* Computation Card */}
+          <div className="calculation-section">
+            <button
+              className={`calc-toggle-btn ${showCalculation ? 'active' : ''}`}
+              onClick={() => setShowCalculation(!showCalculation)}
+            >
+              {showCalculation ? 'Hide Computation' : 'Show Computation'}
+            </button>
 
-          {showCalculation && calculationDetails.details.length > 0 && (
-            <div className="calculation-breakdown animate-fade-in">
-              <h4>Semester GWA Computation</h4>
-              <div className="calc-formula">
-                GWA = (Sum of Grade × Units) / Sum of Units
-              </div>
+            {showCalculation && (
+              <div className="computation-card">
+                <div className="card-header">
+                  <span className="card-icon">Σ</span>
+                  <h3>Semester GWA Computation</h3>
+                </div>
 
-              <div className="calc-steps">
-                {calculationDetails.details.map((item, idx) => (
-                  <div key={idx} className="calc-step-row">
-                    <span className="calc-step-code">{item.code}</span>
-                    <span className="calc-step-math">
-                      {item.grade} (Grade) × {item.unit} (Units) = <strong>{item.product.toFixed(2)}</strong>
-                    </span>
+                <div className="formula-box">
+                  <code>GWA = Σ(Grade × Units) / ΣUnits</code>
+                </div>
+
+                {calculationDetails.details.length > 0 ? (
+                  <div className="steps-container">
+                    <div className="step-list">
+                      {calculationDetails.details.map((item, idx) => (
+                        <div key={idx} className="step-row">
+                          <span className="step-subject">{item.code}</span>
+                          <span className="step-math">
+                            {item.grade.toFixed(2)} <span className="math-label">grade</span> × {item.unit} <span className="math-label">units</span> = <strong>{item.product.toFixed(2)}</strong>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="summary-section">
+                      <div className="summary-row">
+                        <span>Total Units</span>
+                        <strong>{calculationDetails.totalUnits}</strong>
+                      </div>
+                      <div className="summary-row">
+                        <span>Total Weighted Points</span>
+                        <strong>{calculationDetails.totalWeightedGrades.toFixed(2)}</strong>
+                      </div>
+                      <div className="final-step">
+                        <span className="equals">→</span>
+                        <span>{calculationDetails.totalWeightedGrades.toFixed(2)} / {calculationDetails.totalUnits} =</span>
+                        <span className="highlight-result">{calculationDetails.gwa.toFixed(4)}</span>
+                      </div>
+                    </div>
                   </div>
-                ))}
+                ) : (
+                  <p className="empty-msg">Enter some grades to see the detailed breakdown.</p>
+                )}
               </div>
+            )}
+          </div>
 
-              <div className="calc-result-row">
-                <div className="calc-total-units">Total Units: <strong>{calculationDetails.totalUnits}</strong></div>
-                <div className="calc-total-weighted">Total Weighted: <strong>{calculationDetails.totalWeightedGrades.toFixed(2)}</strong></div>
-              </div>
-
-              <div className="calc-final-big">
-                {calculationDetails.totalWeightedGrades.toFixed(2)} / {calculationDetails.totalUnits} = <span className="highlight-gwa">{calculationDetails.gwa.toFixed(4)}</span>
-              </div>
+          {/* Overall Summary Card */}
+          <div className="overall-summary-card">
+            <div className="card-header">
+              <span className="card-icon">🎓</span>
+              <h3>Academic Summary</h3>
             </div>
-          )}
-
-          {showCalculation && calculationDetails.details.length === 0 && (
-            <div className="calculation-breakdown animate-fade-in">
-              <p>Enter some grades to see the computation.</p>
+            <div className="summary-content">
+              <div className="summary-badge-item">
+                <span className="item-label">CUMULATIVE GWA</span>
+                <span className="item-value">{overallGWA > 0 ? Number(overallGWA).toFixed(4) : '--'}</span>
+              </div>
+              {overallGWA > 0 && (
+                <div className={`status-pill ${overallGWA <= 3.0 ? 'status-passed' : 'status-failed'}`}>
+                  {overallGWA <= 3.0 ? 'PASSED' : 'FAILED'}
+                </div>
+              )}
+              <p className="summary-footer">Based on all recorded semesters</p>
             </div>
-          )}
-        </div>
-
-        <div className="overall-gwa-container">
-          <h3>Overall Cumulative GWA</h3>
-          <div className="overall-gwa-value">{overallGWA > 0 ? Number(overallGWA).toFixed(4) : '--'}</div>
+          </div>
         </div>
       </div>
 
