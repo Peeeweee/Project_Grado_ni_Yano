@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import './App.css';
 import { TERMS } from './data';
 
-const LandingLayout = ({ children, buttonText, onNext }) => (
+const LandingLayout = ({ children, buttonText, onNext, onBack, showBack = false }) => (
   <div className="landing-container">
     <div className="landing-card">
       <div className="official-badge">Student Personal Project</div>
@@ -14,9 +14,16 @@ const LandingLayout = ({ children, buttonText, onNext }) => (
 
       {children}
 
-      <button className="premium-button" onClick={onNext}>
-        {buttonText} ›
-      </button>
+      <div className="landing-actions">
+        {showBack && (
+          <button className="premium-button secondary" onClick={onBack}>
+            ‹ PREVIOUS
+          </button>
+        )}
+        <button className="premium-button" onClick={onNext}>
+          {buttonText} ›
+        </button>
+      </div>
 
       <div className="landing-footer">
         <span className="footer-link-badge">Privacy First</span>
@@ -214,6 +221,10 @@ function App() {
     setStep(prev => prev + 1);
   };
 
+  const prevStep = () => {
+    setStep(prev => Math.max(0, prev - 1));
+  };
+
   // Subject Management Functions
   const handleRemoveSubject = (termIndex, subjectId) => {
     setSubjectToDelete({ termIndex, subjectId });
@@ -382,7 +393,7 @@ function App() {
   if (step === 0) {
     return (
       <LandingLayout
-        buttonText="START CALCULATING"
+        buttonText="PROCEED"
         onNext={nextStep}
       >
         <div className="landing-input-group">
@@ -406,6 +417,8 @@ function App() {
       <LandingLayout
         buttonText="PROCEED"
         onNext={nextStep}
+        onBack={prevStep}
+        showBack={true}
       >
         <div className="landing-input-group">
           <select
@@ -440,6 +453,8 @@ function App() {
       <LandingLayout
         buttonText="PROCEED"
         onNext={nextStep}
+        onBack={prevStep}
+        showBack={true}
       >
         <div className="landing-input-group">
           <select
