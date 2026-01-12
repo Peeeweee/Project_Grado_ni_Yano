@@ -1,8 +1,8 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import './App.css';
-import { TERMS } from './data';
+import { COLLEGES, CURRICULUMS } from './data';
 
-const LandingLayout = ({ children, buttonText, onNext, onBack, showBack = false }) => (
+const LandingLayout = ({ children, buttonText, onNext, onBack, showBack = false, extraContent = null }) => (
   <div className="landing-container">
     <div className="landing-card">
       <div className="official-badge">Student Personal Project</div>
@@ -25,6 +25,8 @@ const LandingLayout = ({ children, buttonText, onNext, onBack, showBack = false 
         </button>
       </div>
 
+      {extraContent}
+
       <div className="landing-footer">
         <span className="footer-link-badge">Privacy First</span>
         <span className="footer-link-badge">USeP Grading</span>
@@ -32,6 +34,49 @@ const LandingLayout = ({ children, buttonText, onNext, onBack, showBack = false 
     </div>
   </div>
 );
+const CustomSelect = ({ options, value, onChange, placeholder = "Select option..." }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className={`custom-dropdown ${isOpen ? 'is-open' : ''}`} ref={dropdownRef}>
+      <div
+        className="custom-dropdown-trigger"
+        onClick={() => setIsOpen(!isOpen)}
+        title={value}
+      >
+        <span className="trigger-text">{value || placeholder}</span>
+      </div>
+      {isOpen && (
+        <div className="custom-dropdown-options">
+          {options.map((opt) => (
+            <div
+              key={opt}
+              className={`custom-dropdown-option ${opt === value ? 'is-selected' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onChange(opt);
+                setIsOpen(false);
+              }}
+            >
+              {opt}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 function App() {
   // Steps: 0 = Name, 1 = College/Course, 2 = Semester, 3 = Dashboard
@@ -40,7 +85,11 @@ function App() {
   // User Preferences
   const [studentName, setStudentName] = useState(() => localStorage.getItem('gwa-student-name') || '');
   const [college, setCollege] = useState(() => localStorage.getItem('gwa-college') || 'College of Information and Computing');
-  const [course, setCourse] = useState(() => localStorage.getItem('gwa-course') || 'Computer Science');
+  const [course, setCourse] = useState(() => {
+    const saved = localStorage.getItem('gwa-course');
+    if (saved && CURRICULUMS[saved]) return saved;
+    return COLLEGES['College of Information and Computing'][1]; // Default to BSCS (Data Science)
+  });
 
   const [selectedTermIndex, setSelectedTermIndex] = useState(0);
   const [showCalculation, setShowCalculation] = useState(false);
@@ -50,18 +99,19 @@ function App() {
     try {
       const savedRaw = localStorage.getItem('gwa-terms');
       const saved = savedRaw ? JSON.parse(savedRaw) : null;
-      if (!saved) return TERMS;
+      const activeCurriculum = CURRICULUMS[course] || CURRICULUMS["BS in Computer Science (Specialization: Data Science)"];
+      if (!saved) return activeCurriculum;
 
-      // Sync: Add missing terms from the data.js constant to the saved state
+      // Sync: Add missing terms from the active curriculum to the saved state
       const synced = [...saved];
-      TERMS.forEach(defTerm => {
+      activeCurriculum.forEach(defTerm => {
         if (!synced.some(t => t.name === defTerm.name)) {
           synced.push(defTerm);
         }
       });
       return synced;
     } catch (e) {
-      return TERMS;
+      return CURRICULUMS[course] || CURRICULUMS["BS in Computer Science (Specialization: Data Science)"];
     }
   });
 
@@ -80,7 +130,8 @@ function App() {
     } catch (e) { }
 
     const initialUnits = {};
-    TERMS.forEach(term => {
+    const activeCurriculum = CURRICULUMS[course] || CURRICULUMS["BS in Computer Science (Specialization: Data Science)"];
+    activeCurriculum.forEach(term => {
       term.subjects.forEach(sub => {
         initialUnits[sub.id] = sub.units;
       });
@@ -141,7 +192,8 @@ function App() {
     setGrades({});
     setExcludedSubjects([]);
     setManualGWA(0);
-    setTermsData(TERMS);
+    const activeCurriculum = CURRICULUMS[course] || CURRICULUMS["BS in Computer Science (Specialization: Data Science)"];
+    setTermsData(activeCurriculum);
   }, [college, course]);
 
   // Reset manual results when switching semesters
@@ -202,7 +254,8 @@ function App() {
     if (step === 2) {
       // Robust lookup: Find the default definition by name
       const currentTermName = termsData[selectedTermIndex].name;
-      const defaultTerm = TERMS.find(t => t.name === currentTermName);
+      const activeCurriculum = CURRICULUMS[course] || CURRICULUMS["BS in Computer Science (Specialization: Data Science)"];
+      const defaultTerm = activeCurriculum.find(t => t.name === currentTermName);
       const defaultSubjects = defaultTerm ? defaultTerm.subjects : [];
 
       // STRICT RESET: Discard any previous custom subjects and always use the default curriculum
@@ -225,10 +278,29 @@ function App() {
     setStep(prev => Math.max(0, prev - 1));
   };
 
+  const handleManualInput = () => {
+    const manualCurriculum = CURRICULUMS["Custom (Manual Input)"];
+    setCourse("Custom (Manual Input)");
+    setTermsData(manualCurriculum);
+    setSelectedTermIndex(0);
+    setStep(3); // Jump directly to dashboard
+  };
+
   // Subject Management Functions
   const handleRemoveSubject = (termIndex, subjectId) => {
     setSubjectToDelete({ termIndex, subjectId });
+    setShowDeleteModal(true);
   };
+
+  const handleGoHome = () => {
+    // If returning from Manual Input, reset to a valid course for the selected college
+    if (course === "Custom (Manual Input)") {
+      const defaultCourse = COLLEGES[college]?.[0];
+      if (defaultCourse) setCourse(defaultCourse);
+    }
+    setStep(0);
+  };
+
 
   const confirmDelete = () => {
     if (!subjectToDelete) return;
@@ -324,7 +396,8 @@ function App() {
     const gwa = totalUnits > 0 ? (totalWeightedGrades / totalUnits) : 0;
 
     // Honor Logic
-    const defaultTerm = TERMS.find(t => t.name === currentTerm.name);
+    const activeCurriculum = CURRICULUMS[course] || CURRICULUMS["BS in Computer Science (Specialization: Data Science)"];
+    const defaultTerm = activeCurriculum.find(t => t.name === currentTerm.name);
     const prescribedLoad = defaultTerm ? defaultTerm.subjects.reduce((sum, s) => sum + s.units, 0) : 18;
     const isFullLoad = totalEnrolledUnits >= Math.min(18, prescribedLoad);
 
@@ -415,33 +488,49 @@ function App() {
   if (step === 1) {
     return (
       <LandingLayout
+        extraContent={
+          <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+            <button
+              onClick={handleManualInput}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#666',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                textDecoration: 'underline',
+                opacity: 0.8,
+                transition: 'opacity 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.opacity = '1'}
+              onMouseOut={(e) => e.target.style.opacity = '0.8'}
+            >
+              Not from USeP? Input Manually ›
+            </button>
+          </div>
+        }
         buttonText="PROCEED"
         onNext={nextStep}
         onBack={prevStep}
         showBack={true}
       >
         <div className="landing-input-group">
-          <select
-            className="premium-select"
+          <CustomSelect
+            options={Object.keys(COLLEGES)}
             value={college}
-            onChange={(e) => setCollege(e.target.value)}
-            style={{ marginBottom: '1rem' }}
-          >
-            <option value="College of Information and Computing">College of Information and Computing</option>
-            <option value="College of Engineering">College of Engineering</option>
-            <option value="College of Arts and Sciences">College of Arts and Sciences</option>
-            <option value="College of Education">College of Education</option>
-            <option value="College of Business Administration">College of Business Administration</option>
-          </select>
-          <select
-            className="premium-select"
+            onChange={(val) => {
+              setCollege(val);
+              const firstCourse = COLLEGES[val]?.[0];
+              if (firstCourse) setCourse(firstCourse);
+            }}
+          />
+          <div style={{ height: '1rem' }} />
+          <CustomSelect
+            options={COLLEGES[college] || []}
             value={course}
-            onChange={(e) => setCourse(e.target.value)}
-          >
-            <option value="Computer Science">BS Computer Science</option>
-            <option value="Information Technology">BS Information Technology</option>
-            <option value="Software Engineering">BS Software Engineering</option>
-          </select>
+            onChange={(val) => setCourse(val)}
+          />
         </div>
       </LandingLayout >
     );
@@ -457,15 +546,14 @@ function App() {
         showBack={true}
       >
         <div className="landing-input-group">
-          <select
-            className="premium-select"
-            value={selectedTermIndex}
-            onChange={(e) => setSelectedTermIndex(Number(e.target.value))}
-          >
-            {termsData.map((term, index) => (
-              <option key={index} value={index}>{term.name}</option>
-            ))}
-          </select>
+          <CustomSelect
+            options={termsData.map(t => t.name)}
+            value={termsData[selectedTermIndex].name}
+            onChange={(val) => {
+              const idx = termsData.findIndex(t => t.name === val);
+              setSelectedTermIndex(idx);
+            }}
+          />
         </div>
       </LandingLayout>
     );
@@ -477,30 +565,29 @@ function App() {
       <div className="container animate-fade-in">
         <div className="header">
           <div className="header-left">
-            <div className="app-branding" onClick={() => setStep(0)}>Grado ni Yano</div>
+            <div className="app-branding" onClick={handleGoHome}>Grado ni Yano</div>
             <h1
               className="title"
-              onClick={() => setStep(0)}
+              onClick={handleGoHome}
               title="Go to Home"
             >
               Report of Grades
             </h1>
             <div className="student-info-header">
               <div className="student-name-display">{studentName}</div>
-              <div className="student-details-display">{course} • {college}</div>
-              <div className="student-details-display">{currentTerm.name}</div>
+              {course === "Custom (Manual Input)" ? (
+                <div className="student-details-display">Manual Grade Entry</div>
+              ) : (
+                <>
+                  <div className="student-details-display">{college}</div>
+                  <div className="student-details-display">{course}</div>
+                  <div className="student-details-display">{currentTerm.name}</div>
+                </>
+              )}
             </div>
           </div>
 
           <div className="controls">
-            <button
-              className="term-select-custom"
-              title="Switch Semester"
-              onClick={() => setStep(2)}
-            >
-              Switch Semester <span>▼</span>
-            </button>
-
             <div className="gwa-badge">
               <span className="gwa-number">{manualGWA > 0 ? Number(manualGWA).toFixed(4) : '--'}</span>
               <span className={`remarks-status ${manualGWA > 3.0 ? 'status-failed' : 'status-passed'}`}>
@@ -509,10 +596,26 @@ function App() {
             </div>
 
 
+            {course !== "Custom (Manual Input)" && (
+              <button
+                className="home-btn secondary"
+                title="Back to Semester List"
+                onClick={() => setStep(2)}
+                style={{
+                  background: 'none',
+                  border: '1px solid #e5e5e5',
+                  color: '#666',
+                  marginRight: '0.8rem'
+                }}
+              >
+                ‹ Back
+              </button>
+            )}
+
             <button
               className="home-btn"
               title="Go to Home"
-              onClick={() => setStep(0)}
+              onClick={handleGoHome}
             >
               Home
             </button>
