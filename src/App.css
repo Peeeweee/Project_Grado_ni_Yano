@@ -43,11 +43,11 @@ body {
 
 .landing-card {
   background: var(--white);
-  padding: 4rem 3rem;
+  padding: 3rem 2.5rem;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-premium);
   width: 100%;
-  max-width: 580px;
+  max-width: 450px;
   text-align: center;
   display: flex;
   flex-direction: column;
