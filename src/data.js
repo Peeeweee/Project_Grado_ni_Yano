@@ -16,7 +16,14 @@ export const COLLEGES = {
         "BS in Geology",
         "BS in Agricultural and Biosystems Engineering (BSABE)"
     ],
-    "College of Arts and Sciences": ["Biology", "Mathematics", "English"],
+    "College of Arts and Sciences": [
+        "Bachelor of Science in Mathematics",
+        "Bachelor of Science in Statistics",
+        "BS in Biology (Specialization: Animal Biology)",
+        "BS in Biology (Specialization: Plant Biology)",
+        "BA in English Language major in Applied Linguistics",
+        "BA in Literature and Cultural Studies"
+    ],
     "College of Education": ["Elementary Education", "Secondary Education"],
     "College of Business Administration": ["Accountancy", "Business Management", "Entrepreneurship"]
 };
@@ -1262,6 +1269,506 @@ export const CURRICULUMS = {
         }
     ],
 
+    "Bachelor of Science in Mathematics": [
+        {
+            name: "First Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.GE113, GE_COMMONS.GE114,
+                { id: "Math 111", code: "Math 111", title: "Pre-calculus", units: 3 },
+                { id: "Stat 111", code: "Stat 111", title: "Descriptive Statistics", units: 3 },
+                { id: "Nat Sci 1", code: "Nat Sci 1", title: "General Biology", units: 3 },
+                GE_COMMONS.PE111, GE_COMMONS.NSTP111
+            ]
+        },
+        {
+            name: "First Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.GE111, GE_COMMONS.GE112,
+                { id: "Math 121", code: "Math 121", title: "Fundamental Concepts of Mathematics", units: 3 },
+                { id: "Math 122", code: "Math 122", title: "Calculus 1", units: 3 },
+                { id: "Stat 121", code: "Stat 121", title: "Statistical Methods", units: 3 },
+                GE_COMMONS.PE122, GE_COMMONS.NSTP122
+            ]
+        },
+        {
+            name: "Second Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.GE215, GE_COMMONS.GE216,
+                { id: "Math 211", code: "Math 211", title: "Calculus 2", units: 3 },
+                { id: "Math 212", code: "Math 212", title: "Set Theory", units: 3 },
+                { id: "Nat Sci 2", code: "Nat Sci 2", title: "General Chemistry", units: 3 },
+                { id: "Elective 1", code: "Elective 1", title: "Intro to Info Tech", units: 3 },
+                GE_COMMONS.PE213
+            ]
+        },
+        {
+            name: "Second Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.GE217, GE_COMMONS.GE218,
+                { id: "Math 221", code: "Math 221", title: "Calculus 3", units: 3 },
+                { id: "Math 222", code: "Math 222", title: "Linear Algebra", units: 3 },
+                { id: "Phy Sci 1", code: "Phy Sci 1", title: "General Physics", units: 3 },
+                { id: "CS 2", code: "CS 2", title: "Fundamental of Computing 1", units: 3 },
+                GE_COMMONS.PE224
+            ]
+        },
+        {
+            name: "Third Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.EGE311, GE_COMMONS.GE319,
+                { id: "Math 311", code: "Math 311", title: "Operations Research 1", units: 3 },
+                { id: "Math 312", code: "Math 312", title: "Abstract Algebra 1", units: 3 },
+                { id: "Math 313", code: "Math 313", title: "Probability", units: 3 },
+                { id: "Math 314", code: "Math 314", title: "Graph Theory and Applications", units: 3 },
+                { id: "Math 315", code: "Math 315", title: "Differential Equations 1", units: 3 },
+                { id: "Math 316", code: "Math 316", title: "Combinatorics", units: 3 }
+            ]
+        },
+        {
+            name: "Third Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.EGE312, GE_COMMONS.EGE313,
+                { id: "Math 321", code: "Math 321", title: "Statistical Theory", units: 3 },
+                { id: "Math 322", code: "Math 322", title: "Abstract Algebra 2", units: 3 },
+                { id: "Math 323", code: "Math 323", title: "Advanced Calculus 1", units: 3 },
+                { id: "Math 324", code: "Math 324", title: "Mathematical Modeling", units: 3 },
+                { id: "Math 325", code: "Math 325", title: "Mathematical Research Methods", units: 3 },
+                { id: "Elective 2", code: "Elective 2", title: "Math/Stat/Computing Elective 2", units: 3 }
+            ]
+        },
+        {
+            name: "Fourth Year - 1st Semester",
+            subjects: [
+                { id: "Math 411", code: "Math 411", title: "Modern Geometry", units: 3 },
+                { id: "Math 412", code: "Math 412", title: "Elementary Number Theory", units: 3 },
+                { id: "Math Res 400", code: "Math Res 400", title: "Thesis", units: 3 },
+                { id: "Math 414", code: "Math 414", title: "Practicum", units: 3 },
+                { id: "Elective 3", code: "Elective 3", title: "Math/Stat/Computing Elective 3", units: 3 }
+            ]
+        },
+        {
+            name: "Fourth Year - 2nd Semester",
+            subjects: [
+                { id: "Math 421", code: "Math 421", title: "Real Analysis", units: 3 },
+                { id: "Math 422", code: "Math 422", title: "Complex Analysis", units: 3 },
+                { id: "Math 423", code: "Math 423", title: "Topology", units: 3 },
+                { id: "Math Res 400_2", code: "Math Res 400", title: "Thesis", units: 3 },
+                { id: "Elective 4", code: "Elective 4", title: "Math/Stat/Computing Elective 4", units: 3 }
+            ]
+        }
+    ],
+    "Bachelor of Science in Statistics": [
+        {
+            name: "First Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.GE113, GE_COMMONS.GE114,
+                { id: "MATH 111", code: "MATH 111", title: "Pre-calculus", units: 3 },
+                { id: "MATH 112", code: "MATH 112", title: "Reasoning of Mathematics with Basic Combinatorial Analysis", units: 3 },
+                { id: "STAT 111", code: "STAT 111", title: "Descriptive Statistics", units: 3 },
+                GE_COMMONS.PE111, GE_COMMONS.NSTP111
+            ]
+        },
+        {
+            name: "First Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.GE111, GE_COMMONS.GE112,
+                { id: "ELECT 1", code: "ELECT 1", title: "Free Elective", units: 3 },
+                { id: "MATH 122", code: "MATH 122", title: "Calculus 1", units: 3 },
+                { id: "MATH 123", code: "MATH 123", title: "Set Theory/Logic", units: 3 },
+                { id: "STAT 121", code: "STAT 121", title: "Statistical Methods", units: 3 },
+                GE_COMMONS.PE122, GE_COMMONS.NSTP122
+            ]
+        },
+        {
+            name: "Second Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.GE215, GE_COMMONS.GE216,
+                { id: "ELECT 2", code: "ELECT 2", title: "Free Elective", units: 3 },
+                { id: "MATH 211", code: "MATH 211", title: "Calculus 2", units: 3 },
+                { id: "MATH 213", code: "MATH 213", title: "Linear Algebra and Matrix Theory", units: 3 },
+                { id: "STAT 211", code: "STAT 211", title: "Mathematical Statistics 1", units: 3 },
+                { id: "CS 3", code: "CS 3", title: "Basic Programming Language", units: 3 },
+                GE_COMMONS.PE213
+            ]
+        },
+        {
+            name: "Second Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.GE217, GE_COMMONS.GE218,
+                { id: "ELECT 3", code: "ELECT 3", title: "Free Elective", units: 3 },
+                { id: "MATH 221", code: "MATH 221", title: "Calculus 3", units: 3 },
+                { id: "STAT 221", code: "STAT 221", title: "Mathematical Statistics 2", units: 3 },
+                { id: "CS 4", code: "CS 4", title: "Statistical Software", units: 3 },
+                { id: "ELECT 4", code: "ELECT 4", title: "Stat/Math/Computing Elective", units: 3 },
+                GE_COMMONS.PE224
+            ]
+        },
+        {
+            name: "Third Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.EGE311, GE_COMMONS.GE319,
+                { id: "STAT 311", code: "STAT 311", title: "Mathematical Statistics 3", units: 3 },
+                { id: "STAT 312", code: "STAT 312", title: "Statistical Computing", units: 3 },
+                { id: "ELECT 5", code: "ELECT 5", title: "Stat/Math/Computing Elective", units: 3 },
+                { id: "STAT 313", code: "STAT 313", title: "Research Methods in Statistics", units: 3 }
+            ]
+        },
+        {
+            name: "Third Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.EGE312, GE_COMMONS.EGE313,
+                { id: "STAT 321", code: "STAT 321", title: "Bayesian Statistics", units: 3 },
+                { id: "STAT 322", code: "STAT 322", title: "Regression Analysis", units: 3 },
+                { id: "STAT 323", code: "STAT 323", title: "Nonparametric Statistics", units: 3 },
+                { id: "STAT 324", code: "STAT 324", title: "Survey Sampling", units: 3 }
+            ]
+        },
+        {
+            name: "Summer & Fourth Year",
+            subjects: [
+                { id: "STAT 331", code: "STAT 331", title: "On the Job Training", units: 3 },
+                { id: "ELECT 6", code: "ELECT 6", title: "Stat/Math/Computing Elective", units: 3 },
+                { id: "STAT 411", code: "STAT 411", title: "Experimental Designs", units: 3 },
+                { id: "STAT 412", code: "STAT 412", title: "Time Series Analysis", units: 3 },
+                { id: "STAT 413", code: "STAT 413", title: "Multivariate Analysis", units: 3 },
+                { id: "STAT RES 400", code: "STAT RES 400", title: "Thesis", units: 3 },
+                { id: "ELECT 7", code: "ELECT 7", title: "Stat/Math/Computing Elective", units: 3 },
+                { id: "STAT 421", code: "STAT 421", title: "Categorical Data Analysis", units: 3 },
+                { id: "STAT 422", code: "STAT 422", title: "Statistical Communication and Consulting", units: 3 },
+                { id: "STAT 423", code: "STAT 423", title: "Survey Operations", units: 3 },
+                { id: "STAT RES 400_2", code: "STAT RES 400", title: "Thesis", units: 3 }
+            ]
+        }
+    ],
+    "BS in Biology (Specialization: Animal Biology)": [
+        {
+            name: "First Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.GE113, GE_COMMONS.GE114,
+                { id: "Bio 111", code: "Bio 111", title: "General Botany", units: 3 },
+                { id: "Bio 112", code: "Bio 112", title: "General Zoology", units: 3 },
+                GE_COMMONS.PE111, GE_COMMONS.NSTP111
+            ]
+        },
+        {
+            name: "First Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.GE111, GE_COMMONS.GE112,
+                { id: "Bio 121", code: "Bio 121", title: "Systematics", units: 3 },
+                { id: "Bio 122", code: "Bio 122", title: "Genetics", units: 3 },
+                { id: "Bio 123", code: "Bio 123", title: "Organic Molecules", units: 3 },
+                GE_COMMONS.PE122, GE_COMMONS.NSTP122
+            ]
+        },
+        {
+            name: "Second Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.GE215, GE_COMMONS.GE216,
+                { id: "Bio 211", code: "Bio 211", title: "Microbiology", units: 3 },
+                { id: "Bio 212", code: "Bio 212", title: "General Ecology", units: 3 },
+                { id: "Bio 213", code: "Bio 213", title: "Analytical Methods for Bio.", units: 3 },
+                GE_COMMONS.PE213
+            ]
+        },
+        {
+            name: "Second Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.GE217, GE_COMMONS.GE218,
+                { id: "Bio 221", code: "Bio 221", title: "Biomolecules", units: 3 },
+                { id: "Bio 222", code: "Bio 222", title: "Developmental Biology", units: 3 },
+                { id: "Bio 223", code: "Bio 223", title: "Statistical Biology", units: 3 },
+                GE_COMMONS.PE224
+            ]
+        },
+        {
+            name: "Third Year - 1st Semester",
+            subjects: [
+                { id: "LGL 311", code: "LGL 311", title: "General Education Elective 1", units: 3 },
+                GE_COMMONS.GE319,
+                { id: "Bio 311", code: "Bio 311", title: "Cell & Molecular Biology", units: 3 },
+                { id: "Bio 312", code: "Bio 312", title: "Invertebrate Zoology", units: 3 },
+                { id: "Bio 411", code: "Bio 411", title: "General Physiology", units: 3 }
+            ]
+        },
+        {
+            name: "Third Year - 2nd Semester",
+            subjects: [
+                { id: "LGL 312", code: "LGL 312", title: "General Education Elective 2", units: 3 },
+                GE_COMMONS.EGE313,
+                { id: "Bio 321", code: "Bio 321", title: "Biophysics", units: 3 },
+                { id: "AnBio 322", code: "AnBio 322", title: "Parasitology", units: 3 },
+                { id: "Bio Res 400", code: "Bio Res 400", title: "Thesis", units: 3 }
+            ]
+        },
+        {
+            name: "Summer & Fourth Year",
+            subjects: [
+                { id: "Bio 331", code: "Bio 331", title: "Apprenticeship", units: 3 },
+                { id: "AnBio 412", code: "AnBio 412", title: "Comparative Vert. Anatomy", units: 3 },
+                { id: "AnBio 413", code: "AnBio 413", title: "Developmental Zoology", units: 3 },
+                { id: "Bio 414", code: "Bio 414", title: "Population Ecology", units: 3 },
+                { id: "Bio 415", code: "Bio 415", title: "Free Elective 1", units: 3 },
+                { id: "Bio Res 400_2", code: "Bio Res 400", title: "Thesis", units: 3 },
+                { id: "Bio 421", code: "Bio 421", title: "Community Ecology", units: 3 },
+                { id: "Bio 422", code: "Bio 422", title: "Evolutionary Biology", units: 3 },
+                { id: "AnBio 423", code: "AnBio 423", title: "Animal Physiology", units: 3 },
+                { id: "Bio 424", code: "Bio 424", title: "Free Elective 2", units: 3 },
+                { id: "Bio Res 400_3", code: "Bio Res 400", title: "Thesis", units: 3 }
+            ]
+        }
+    ],
+    "BS in Biology (Specialization: Plant Biology)": [
+        {
+            name: "First Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.GE113, GE_COMMONS.GE114,
+                { id: "Bio 111", code: "Bio 111", title: "General Botany", units: 3 },
+                { id: "Bio 112", code: "Bio 112", title: "General Zoology", units: 3 },
+                GE_COMMONS.PE111, GE_COMMONS.NSTP111
+            ]
+        },
+        {
+            name: "First Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.GE111, GE_COMMONS.GE112,
+                { id: "Bio 121", code: "Bio 121", title: "Systematics", units: 3 },
+                { id: "Bio 122", code: "Bio 122", title: "Genetics", units: 3 },
+                { id: "Bio 123", code: "Bio 123", title: "Organic Molecules", units: 3 },
+                GE_COMMONS.PE122, GE_COMMONS.NSTP122
+            ]
+        },
+        {
+            name: "Second Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.GE215, GE_COMMONS.GE216,
+                { id: "Bio 211", code: "Bio 211", title: "Microbiology", units: 3 },
+                { id: "Bio 212", code: "Bio 212", title: "General Ecology", units: 3 },
+                { id: "Bio 213", code: "Bio 213", title: "Analytical Methods for Bio.", units: 3 },
+                GE_COMMONS.PE213
+            ]
+        },
+        {
+            name: "Second Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.GE217, GE_COMMONS.GE218,
+                { id: "Bio 221", code: "Bio 221", title: "Biomolecules", units: 3 },
+                { id: "Bio 222", code: "Bio 222", title: "Developmental Biology", units: 3 },
+                { id: "Bio 223", code: "Bio 223", title: "Statistical Biology", units: 3 },
+                GE_COMMONS.PE224
+            ]
+        },
+        {
+            name: "Third Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.EGE311, GE_COMMONS.GE319,
+                { id: "Bio 311", code: "Bio 311", title: "Cell & Molecular Biology", units: 3 },
+                { id: "PltBio 312", code: "PltBio 312", title: "Plant Morphology & Anatomy", units: 3 },
+                { id: "Bio 411", code: "Bio 411", title: "General Physiology", units: 3 }
+            ]
+        },
+        {
+            name: "Third Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.EGE312,
+                { id: "LGL 313", code: "LGL 313", title: "General Education Elective 3", units: 3 },
+                { id: "Bio 321", code: "Bio 321", title: "Biophysics", units: 3 },
+                { id: "PltBio 322", code: "PltBio 322", title: "Taxonomy of Lower Vascular Plants", units: 3 },
+                { id: "Bio Res 400", code: "Bio Res 400", title: "Thesis", units: 3 }
+            ]
+        },
+        {
+            name: "Summer & Fourth Year",
+            subjects: [
+                { id: "Bio 331", code: "Bio 331", title: "Apprenticeship", units: 3 },
+                { id: "PltBio 412", code: "PltBio 412", title: "Economic Botany", units: 3 },
+                { id: "PltBio 413", code: "PltBio 413", title: "Taxonomy of Higher Vascular Plants", units: 3 },
+                { id: "Bio 414", code: "Bio 414", title: "Population Ecology", units: 3 },
+                { id: "Bio 415", code: "Bio 415", title: "Free Elective 1", units: 3 },
+                { id: "Bio Res 400_2", code: "Bio Res 400", title: "Thesis", units: 3 },
+                { id: "Bio 421", code: "Bio 421", title: "Community Ecology", units: 3 },
+                { id: "Bio 422", code: "Bio 422", title: "Evolutionary Biology", units: 3 },
+                { id: "PltBio 423", code: "PltBio 423", title: "Plant Physiology", units: 3 },
+                { id: "Bio 424", code: "Bio 424", title: "Free Elective 2", units: 3 },
+                { id: "Bio Res 400_3", code: "Bio Res 400", title: "Thesis", units: 3 }
+            ]
+        }
+    ],
+    "BA in English Language major in Applied Linguistics": [
+        {
+            name: "First Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.GE113, GE_COMMONS.GE114,
+                { id: "FL1a", code: "FL1a", title: "Foreign Language 1: Beginner Level", units: 3 },
+                { id: "ELAL 100", code: "ELAL 100", title: "Introduction to the English Language System", units: 3 },
+                { id: "ELAL 101", code: "ELAL 101", title: "Theories of Language and Language Acquisition", units: 3 },
+                { id: "ELAL 102", code: "ELAL 102", title: "History of the English Language", units: 3 },
+                GE_COMMONS.PE111, GE_COMMONS.NSTP111
+            ]
+        },
+        {
+            name: "First Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.GE111, GE_COMMONS.GE112,
+                { id: "FL1b", code: "FL1b", title: "Foreign Language 1: Intermediate Level", units: 3 },
+                { id: "ELAL 103", code: "ELAL 103", title: "English Phonology and Morphology", units: 3 },
+                { id: "ELAL 104", code: "ELAL 104", title: "English Syntax", units: 3 },
+                { id: "ELAL 105", code: "ELAL 105", title: "Introduction to Language, Society and Culture", units: 3 },
+                GE_COMMONS.PE122, GE_COMMONS.NSTP122
+            ]
+        },
+        {
+            name: "Second Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.GE215, GE_COMMONS.GE216,
+                { id: "ELAL 201", code: "ELAL 201", title: "Semantics of English", units: 3 },
+                { id: "ELAL 202", code: "ELAL 202", title: "English Discourse", units: 3 },
+                { id: "ELAL 203", code: "ELAL 203", title: "Stylistics", units: 3 },
+                { id: "ELAL 204", code: "ELAL 204", title: "Language of Literary Texts", units: 3 },
+                { id: "ELAL 205", code: "ELAL 205", title: "Introduction to Anthropological Linguistics", units: 3 },
+                GE_COMMONS.PE213
+            ]
+        },
+        {
+            name: "Second Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.GE217, GE_COMMONS.GE218,
+                { id: "ELAL 206", code: "ELAL 206", title: "Varieties of English", units: 3 },
+                { id: "ELAL 207", code: "ELAL 207", title: "Language of Non-Literary Texts", units: 3 },
+                { id: "ELAL 208", code: "ELAL 208", title: "Computer-mediated Communication", units: 3 },
+                { id: "ELAL 209", code: "ELAL 209", title: "Language and Gender", units: 3 },
+                { id: "ELAL 210", code: "ELAL 210", title: "Translation Studies", units: 3 },
+                GE_COMMONS.PE224
+            ]
+        },
+        {
+            name: "Third Year - 1st Semester",
+            subjects: [
+                { id: "ELAL 301", code: "ELAL 301", title: "Foundations of English Language Teaching and Learning", units: 3 },
+                { id: "ELAL 302", code: "ELAL 302", title: "ELT Approaches and Methods", units: 3 },
+                { id: "ELAL 303", code: "ELAL 303", title: "English Language Testing and Assessment", units: 3 },
+                { id: "ELAL 304", code: "ELAL 304", title: "Intercultural Communication", units: 3 },
+                { id: "ELAL 305", code: "ELAL 305", title: "Language and Media", units: 3 },
+                GE_COMMONS.EGE311, GE_COMMONS.GE319,
+                { id: "FL2a", code: "FL2a", title: "Foreign Language 2: Beginner Level", units: 3 }
+            ]
+        },
+        {
+            name: "Third Year - 2nd Semester",
+            subjects: [
+                { id: "ELAL 306", code: "ELAL 306", title: "English Language Curriculum Development", units: 3 },
+                { id: "ELAL 307", code: "ELAL 307", title: "Language Policies and Programs", units: 3 },
+                { id: "ELAL 308", code: "ELAL 308", title: "Multilingualism and Multiculturalism", units: 3 },
+                { id: "ELAL 309", code: "ELAL 309", title: "Introduction to Pragmatics", units: 3 },
+                GE_COMMONS.EGE312, GE_COMMONS.EGE313,
+                { id: "FL2b", code: "FL2b", title: "Foreign Language 2: Intermediate Level", units: 3 },
+                { id: "ELALRes 400", code: "ELALRes 400", title: "Language Research: Methodology", units: 3 }
+            ]
+        },
+        {
+            name: "Fourth Year - 1st Semester",
+            subjects: [
+                { id: "ELAL 401", code: "ELAL 401", title: "Instructional Materials Development and Evaluation", units: 3 },
+                { id: "ELAL 402", code: "ELAL 402", title: "Argumentation and Debate", units: 3 },
+                { id: "ELAL 403", code: "ELAL 403", title: "Philippine English", units: 3 },
+                { id: "ELAL 404", code: "ELAL 404", title: "Multimodal Communication", units: 3 },
+                { id: "ELAL 405", code: "ELAL 405", title: "Language and Power", units: 3 },
+                { id: "ELALRes 400_2", code: "ELALRes 400", title: "Language Research: Thesis", units: 3 }
+            ]
+        },
+        {
+            name: "Fourth Year - 2nd Semester",
+            subjects: [
+                { id: "ELALRes 400_3", code: "ELALRes 400", title: "Language Research: Thesis", units: 3 },
+                { id: "ELAL 401_OJT", code: "ELAL 401", title: "OJT", units: 3 }
+            ]
+        }
+    ],
+    "BA in Literature and Cultural Studies": [
+        {
+            name: "First Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.GE113, GE_COMMONS.GE114,
+                { id: "LCS 111", code: "LCS 111", title: "Introduction to Literature and Cultural Studies", units: 3 },
+                { id: "LCS 112", code: "LCS 112", title: "Introduction to Literary Theory", units: 3 },
+                { id: "LCS 113", code: "LCS 113", title: "Introduction to Cultural Theory", units: 3 },
+                { id: "LCS 114", code: "LCS 114", title: "Foreign Language 1", units: 3 },
+                GE_COMMONS.PE111, GE_COMMONS.NSTP111
+            ]
+        },
+        {
+            name: "First Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.GE111, GE_COMMONS.GE112,
+                { id: "LCS 125", code: "LCS 125", title: "Introduction to the Professional Tradition", units: 3 },
+                { id: "LCS 126", code: "LCS 126", title: "Introduction to Creative Writing", units: 3 },
+                { id: "LCS 127", code: "LCS 127", title: "Introduction to Translation / Grammar", units: 3 },
+                { id: "LCS 128", code: "LCS 128", title: "Foreign Language 2", units: 3 },
+                GE_COMMONS.PE122, GE_COMMONS.NSTP122
+            ]
+        },
+        {
+            name: "Second Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.GE215, GE_COMMONS.GE216,
+                { id: "LCS 211", code: "LCS 211", title: "Philippine Literature: The Region and the Nation", units: 3 },
+                { id: "LCS 212", code: "LCS 212", title: "Philippine Literary Theory and Criticism", units: 3 },
+                { id: "LCS 213", code: "LCS 213", title: "Literatures of Africa and the Middle East", units: 3 },
+                { id: "LCS 214", code: "LCS 214", title: "Literature and Cultural Anthropology", units: 3 },
+                { id: "LCS 215", code: "LCS 215", title: "Children's Literature", units: 3 },
+                GE_COMMONS.PE213
+            ]
+        },
+        {
+            name: "Second Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.GE217, GE_COMMONS.GE218,
+                { id: "LCS 226", code: "LCS 226", title: "Popular Literature", units: 3 },
+                { id: "LCS 227", code: "LCS 227", title: "Literatures of Asia 1", units: 3 },
+                { id: "LCS 228", code: "LCS 228", title: "Literary Research", units: 3 },
+                { id: "LCS 229", code: "LCS 229", title: "Introduction to Literature and the Professions", units: 3 },
+                { id: "Elect 1", code: "Elect 1", title: "Literature and the Environment", units: 3 },
+                GE_COMMONS.PE224
+            ]
+        },
+        {
+            name: "Third Year - 1st Semester",
+            subjects: [
+                GE_COMMONS.EGE311, GE_COMMONS.GE319,
+                { id: "LCS 311", code: "LCS 311", title: "Literatures of Asia 2", units: 3 },
+                { id: "LCS 312", code: "LCS 312", title: "Literatures of Europe", units: 3 },
+                { id: "LCS 313", code: "LCS 313", title: "Philippine Ethnic-Cultural Studies", units: 3 },
+                { id: "LCS 314", code: "LCS 314", title: "Ethnic Groups of Mindanao", units: 3 },
+                { id: "LCS 315", code: "LCS 315", title: "Contemporary Literature", units: 3 }
+            ]
+        },
+        {
+            name: "Third Year - 2nd Semester",
+            subjects: [
+                GE_COMMONS.EGE312, GE_COMMONS.EGE313,
+                { id: "LCS 326", code: "LCS 326", title: "Literatures of America", units: 3 },
+                { id: "LCS 327", code: "LCS 327", title: "Literature and the Humanities", units: 3 },
+                { id: "LCS 328", code: "LCS 328", title: "Philippine Popular Culture", units: 3 },
+                { id: "LCS 329", code: "LCS 329", title: "Thesis", units: 3 },
+                { id: "LCS 330", code: "LCS 330", title: "Indigenous Literary Theory", units: 3 }
+            ]
+        },
+        {
+            name: "Fourth Year - 1st Semester",
+            subjects: [
+                { id: "Elect 3", code: "Elect 3", title: "Literature and the Digital Media", units: 3 },
+                { id: "Elect 4", code: "Elect 4", title: "Use of Symbols in Professional Communication", units: 3 },
+                { id: "Elect 5", code: "Elect 5", title: "Special Topics and Workshops", units: 3 },
+                { id: "Elect 6", code: "Elect 6", title: "The Teaching of Literature and Composition", units: 3 },
+                { id: "LCS 400", code: "LCS 400", title: "Thesis", units: 3 }
+            ]
+        },
+        {
+            name: "Fourth Year - 2nd Semester",
+            subjects: [
+                { id: "LCS 421", code: "LCS 421", title: "Practicum (320 hrs)", units: 3 }
+            ]
+        }
+    ],
     "Custom (Manual Input)": [
         {
             name: "Semester 1",
